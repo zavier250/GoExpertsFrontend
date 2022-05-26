@@ -11,21 +11,22 @@ pipeline {
                 echo "Installing yarn..."
                 // sh 'sudo -A curl -fsSL https://deb.nodesource.com/setup_14.x | bash -'
                 // sh 'sudo apt-get install -y nodejs'
-                sh 'npm install -g yarn@1.22.17'
+                // sh 'npm install -g yarn@1.22.17'
+                sh 'npm install'
             }
         }
         
-        stage('Install dependency') {
-            steps{
-                sh 'yarn'
-            }
-        }
-        stage('yarn build') {
-            steps{
-                    sh 'yarn prettier'
-                    sh 'yarn build'
-            }
-        }
+        // stage('Install dependency') {
+        //     steps{
+        //         sh 'yarn'
+        //     }
+        // }
+        // stage('yarn build') {
+        //     steps{
+        //             sh 'yarn prettier'
+        //             sh 'yarn build'
+        //     }
+        // }
 
         // stage('artifact to s3') {
         //     steps{
