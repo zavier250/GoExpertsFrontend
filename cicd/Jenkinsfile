@@ -6,8 +6,10 @@ pipeline {
     }
 
     environment { 
-        HOME="." 
-        }
+        HOME="."
+        BUILD_ARTIFACT_PATH='/var/jenkins_home/workspace/GoExport_FE/build'
+        BUCKET_NAME='goexpert-frontend' 
+    }
 
     stages {
         stage('Install Yarn') {
@@ -23,25 +25,36 @@ pipeline {
             }
         }
         
-        // stage('Install dependency') {
-        //     steps{
-        //         sh 'yarn'
-        //     }
-        // }
-        // stage('yarn build') {
-        //     steps{
-        //             sh 'yarn prettier'
-        //             sh 'yarn build'
-        //     }
-        // }
+        stage('Build') {
+            steps{
+                echo "Building..."
+                sh 'npm run build'
+            }
+        }
+        stage('Install AWS CLI') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                echo "Installing AWS CLI ..."
+                sh 'apt-get update'
+                sh 'apt install python3-pip -y'
+                sh 'pip3 install awscli --upgrade'
+            }
+        }
 
-        // stage('artifact to s3') {
-        //     steps{
-        //     s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'fe-quick-learner-jenkins', excludedFile: '', flatten: false, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: false, selectedRegion: 'ap-southeast-2', showDirectlyInBrowser: false, sourceFile: 'build/**', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 'fe-quick-learner-jenkins', userMetadata: []
-        //     }
-        // }
+        stage("deployToS3") {
+            echo "Deploying to S3..."
+            withAWS(credentials: 'aws', region: 'ap-southeast-2') {
+                    sh 'aws s3 cp "${BUILD_ARTIFACT_PATH}" "${BUCKET_NAME}" --recursive --acl public-read'
+                }
+
+        }
         
     }
+    
+
+
 
     post {
         always {
