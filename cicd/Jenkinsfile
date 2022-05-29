@@ -5,6 +5,10 @@ pipeline {
         }
     }
 
+    environment { 
+        HOME="." 
+        }
+
     stages {
         stage('Install Yarn') {
             steps{
@@ -14,7 +18,7 @@ pipeline {
                 // sh 'npm install -g yarn@1.22.17'
                 sh 'npm --version'
                 sh 'ls'
-                sh 'chown -R jenkins ~/.npm'
+                // sh 'chown -R jenkins ~/.npm'
                 sh 'npm install'
             }
         }
