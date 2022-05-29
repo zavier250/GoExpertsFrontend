@@ -43,11 +43,13 @@ pipeline {
             }
         }
 
-        stage("deployToS3") {
-            echo "Deploying to S3..."
+        stage('deployToS3') {
+            steps {
+                            echo "Deploying to S3..."
             withAWS(credentials: 'aws', region: 'ap-southeast-2') {
                     sh 'aws s3 cp "${BUILD_ARTIFACT_PATH}" "${BUCKET_NAME}" --recursive --acl public-read'
                 }
+            }
 
         }
         
