@@ -14,7 +14,7 @@ pipeline {
                 // sh 'npm install -g yarn@1.22.17'
                 sh 'npm --version'
                 sh 'ls'
-                sh 'sudo chown -R jenkins ~/.npm'
+                sh 'chown -R jenkins ~/.npm'
                 sh 'npm install'
             }
         }
